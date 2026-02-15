@@ -1,80 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
- <style>
-
-
-.category{
-
-
-    text-align: center;
-    margin: auto;
-}
-
-.cat{
-
-    font-weight: bold;
-    color: white;
-    padding-bottom: 50px;
-}
-
-.field{
-
-    width: 500px;
-    height: 40px;
-}
-   
-
- </style>
     @include('admin.css')
+
+    <style>
+        .category {
+            text-align: center;
+            margin: auto;
+        }
+
+        .cat {
+            font-weight: bold;
+            color: white;
+            padding-bottom: 40px;
+        }
+
+        .field {
+            width: 500px;
+            height: 40px;
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
+
 <body>
 
-    @include('admin.header')
-    @include('admin.slidebar')
+@include('admin.header')
+@include('admin.slidebar')
 
-    <div class="page-content">
-        <div class="page-header">
-            <div class="container-fluid">
+<div class="page-content">
+    <div class="page-header">
+        <div class="container-fluid">
 
-               <div class="category">
+            <div class="category">
 
+                <h1 class="cat">Edit Category</h1>
 
-               <h1 class="cat">Edit Category</h1>
+                {{-- Success Message --}}
+                @if(session('message'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('message') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
 
-               <div class="alert alert-success alert-dismissible fade show" role="alert">
-                @if(session()->has('message'))
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">x</button>
+                {{-- Validation Error --}}
+                @error('cat_name')
+                    <div class="alert alert-danger">
+                        {{ $message }}
+                    </div>
+                @enderror
 
-               <div>
-               {{session()->get('message')}}
-                </div>
-               @endif
-                 
-               </div> 
-     
+                <form action="{{ route('update_category', ['id' => $data->id]) }}" method="POST">
+                    @csrf
+                    @method('PUT')
 
-                  <form action="{{ route('update_category', $data->id) }}" method="POST">
-    @csrf
-    @method('PUT')
+                    <div>
+                        <label>Category Name</label><br>
 
-    <label>Category Name</label>
-    <input 
-        type="text" 
-        name="cat_name" 
-        value="{{ old('cat_name', $data->cat_title) }}" 
-        class="field" 
-        required
-    >
+                        <input 
+                            type="text"
+                            name="cat_name"
+                            class="field"
+                            value="{{ old('cat_name') ?? $data->cat_title }}"
+                            placeholder="Enter Category Name"
+                        >
+                    </div>
 
-    <button class="btn btn-primary"  type="submit">Update Category</button>
-</form>
+                    <div>
+                        <button type="submit" class="btn btn-primary">
+                            Update Category
+                        </button>
+                    </div>
 
-            
-              
-               </div> 
+                </form>
+
+            </div>
+
+        </div>
+    </div>
 </div>
-</div>
-</div>
-</div>
+
+</body>
+</html>
