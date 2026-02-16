@@ -1,148 +1,134 @@
 <!DOCTYPE html>
-<html> 
-  @include('admin.css')
-  <style>
+<html>
+@include('admin.css')
 
+<style>
+    .form-wrapper {
+        max-width: 550px;
+        padding: 25px;
+    }
 
+    .form-title {
+        color: #ffffff;
+        margin-bottom: 25px;
+    }
 
-.book-form {
-    max-width: 520px;
-    padding: 20px;
-    
-}
+    .input-field,
+    .textarea-field,
+    .file-field {
+        width: 100%;
+        background: #1f2933;
+        border: 1px solid #374151;
+        border-radius: 6px;
+        color: #ffffff;
+        padding: 10px;
+        margin-bottom: 15px;
+    }
 
+    .input-field:focus,
+    .textarea-field:focus {
+        border-color: #4f46e5;
+        box-shadow: 0 0 5px #4f46e5;
+        outline: none;
+    }
 
-.book-form .form-group {
-    margin-bottom: 15px;
-}
+    .textarea-field {
+        min-height: 90px;
+        resize: none;
+    }
 
+    .submit-btn {
+        padding: 10px 25px;
+        background: crimson;
+        border: none;
+        border-radius: 6px;
+        color: #ffffff;
+        font-weight: bold;
+        cursor: pointer;
+    }
 
-.book-form label {
-    display: block;
-    margin-bottom: 6px;
-    color: #cfd2dc;
-    font-size: 14px;
-}
+    .submit-btn:hover {
+        background: #000000;
+    }
 
+    .reader-img {
+        width: 80px;
+        border-radius: 50%;
+        margin-bottom: 15px;
+    }
+</style>
 
-.custom-input {
-    width: 100%;
-    height: 40px;
-    background: #1f2933;
-    border: 1px solid #374151;
-    border-radius: 5px;
-    color: #ffffff;
-    padding: 0 12px;
-    outline: none;
-}
+<body>
 
-.custom-input:focus {
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 1px #4f46e5;
-}
+@include('admin.header')
+@include('admin.slidebar')
 
-.custom-file {
-    background: #1f2933;
-    border: 1px solid #374151;
-    color: #cfd2dc;
-    padding: 6px;
-    border-radius: 5px;
-}
+<div class="page-content">
+    <div class="page-header">
+        <div class="container-fluid">
 
+            <div class="form-wrapper">
 
-.custom-textarea {
-    width: 100%;
-    min-height: 80px;
-    background: #1f2933;
-    border: 1px solid #374151;
-    border-radius: 5px;
-    color: #ffffff;
-    padding: 10px;
-    resize: none;
-}
+                <h2 class="form-title">Update Reader Information</h2>
 
+                <form action="{{ url('update_reader', $data->id) }}" 
+                      method="POST" 
+                      enctype="multipart/form-data">
 
-.custom-btn {
-    margin-top: 10px;
-    padding: 10px 20px;
-    background:crimson;
-    border: none;
-    border-radius: 6px;
-    font-weight: 600;
-    color:white;
-    font-weight: bold;
-}
+                    @csrf
+                    @method('PUT')
 
-.custom-btn:hover {
-    background: black;
-}
+                    <label>Name</label>
+                    <input type="text" 
+                           name="title" 
+                           value="{{ $data->title }}" 
+                           class="input-field">
 
-  </style>
-  <body>
-    @include('admin.header')
-     @include('admin.slidebar')
-   
-     <div class="page-content">
-        <div class="page-header">
-            <div class="container-fluid">
+                    <label>Phone</label>
+                    <input type="number" 
+                           name="phone" 
+                           value="{{ $data->phone }}" 
+                           class="input-field">
 
+                    <label>Email</label>
+                    <input type="text" 
+                           name="email" 
+                           value="{{ $data->email }}" 
+                           class="input-field">
 
-               <div class="book_div">
+                    <label>Description</label>
+                    <textarea name="description" 
+                              class="textarea-field">{{ $data->description }}</textarea>
 
-            <h1>Edit Book Detalis </h1>
+                    <label>Address</label>
+                    <input type="text" 
+                           name="address" 
+                           value="{{ $data->address }}" 
+                           class="input-field">
 
-            <form action="{{url('update_reader', $data->id)}}" method="POST" enctype="multipart/form-data">
-             @csrf   @method('PUT')
-            <div class="form-group">
-                <label for="">Edit Name</label>
-                <input type="text" name="title" class="form-control custom-input" value="{{$data->title}}">
+                    <label>Current Image</label><br>
+                    <img src="{{ asset('user_images/'.$data->user_img) }}" 
+                         class="reader-img">
+
+                    <label>Change Image</label>
+                    <input type="file" 
+                           name="user_img" 
+                           class="file-field">
+
+                    <br><br>
+                    <input type="submit" 
+                           value="Update Reader Details" 
+                           class="submit-btn">
+
+                </form>
+
             </div>
 
-             <div class="form-group">
-                <label for="">Edit Phone</label>
-                <input type="number" name="phone" class="form-control custom-input"value="{{$data->phone}}">
-            </div>
-
-             <div class="form-group">
-                <label for="">Edit Email</label>
-                <input type="text" name="email" class="form-control custom-input" value="{{$data->email}}">
-            </div>
-                    <div class="form-group">
-                <label for="">Add Book Description</label>
-               <textarea name="description"  class="form-control custom-textarea" >{{$data->description}}</textarea>
-            </div>
-
-             <div class="form-group">
-                <label for="">Edit Address</label>
-                <input type="address" name="address" class="form-control custom-input"value="{{$data->address}}">
-            </div>
-
-                    <div class="form-group">
-        <label>Current Reader Image</label>
-           <img src="/user_images/{{$data->user_img}}" style="border:50%; width:80px;" >                 
+        </div>
     </div>
-
-             <div class="form-group">
-                <label for="">Edit Reader Image</label>
-                <input type="file" name="user_img" class="form-control custom-file">
-            </div>
-
-
-                 
-           
-                                                                              
-    
-
-            </div>
-
-             <div class="form-group">
-              
-                <input type="submit" value="Update Reader Details" class="custom-btn">
-            </div>
-            </form>
-            </div>
-</div>
-</div> 
 </div>
 
-        @include('admin.footer')
+@include('admin.footer')
+
+</body>
+</html>
