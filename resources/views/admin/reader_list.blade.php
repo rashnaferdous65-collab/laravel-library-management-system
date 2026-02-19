@@ -1,121 +1,154 @@
 <!DOCTYPE html>
-<html> 
-  @include('admin.css')
-   <style>
-  .cat {
+<html lang="en">
+
+@include('admin.css')
+
+<style>
+    .page-title {
         text-align: center;
         font-weight: bold;
-        color: white;
-        padding-bottom: 30px;
+        color: #ffffff;
+        margin-bottom: 30px;
         font-size: 28px;
     }
 
-   
-    .table_container {
+    .reader-table-wrapper {
         overflow-x: auto;
-        margin-top: 20px;
+        margin-top: 25px;
     }
 
-    .table {
+    .reader-table {
+        width: 100%;
+        border-collapse: collapse;
         text-align: center;
-        margin: auto;
-        width: 100%;       
-        border: 1px solid rgba(255, 255, 255, 0.1); 
-        table-layout: auto; 
     }
 
-    th {
-        background-color: rgba(21, 142, 138, 0.79);
-        padding: 15px;
-        color: white;
-        font-weight: bold;
-        white-space: nowrap;
-    }      
+    .reader-table th {
+        background: rgba(21, 142, 138, 0.85);
+        padding: 14px;
+        color: #fff;
+        font-weight: 600;
+    }
 
-    td {
-        color: white;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+    .reader-table td {
         padding: 12px;
-        font-size: 15px; 
+        border: 1px solid rgba(255,255,255,0.1);
+        color: #ffffff;
         vertical-align: middle;
     }
 
-    .user_img {
-        width: 60px; 
-        height: auto; 
-        border-radius: 5px;
+    .reader-image {
+        width: 65px;
+        border-radius: 6px;
     }
 
-    
-    .text-wrap {
-        white-space: normal;
-        max-width: 200px;
-        word-wrap: break-word;
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
     }
-  </style>
 
-  <body>
-    @include('admin.header')
-     @include('admin.slidebar')
-   
-      <div class="page-content">
-        <div class="page-header">
-            <div class="container-fluid">
-                 @if(session()->has('message'))
-                  <div class="alert alert-success alert-dismissible fade show text-center mx-auto" role="alert" style="max-width: 600px; margin-top: 20px;">
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">x</button>
+    .btn-edit {
+        padding: 5px 15px;
+        background: #0d6efd;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 14px;
+    }
 
-             
-               {{session()->get('message')}}
+    .btn-delete {
+        padding: 5px 12px;
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+</style>
+
+<body>
+
+@include('admin.header')
+@include('admin.slidebar')
+
+<div class="page-content">
+    <div class="page-header">
+        <div class="container-fluid">
+
+            {{-- Success Message --}}
+            @if(session()->has('message'))
+                <div class="alert alert-success text-center mx-auto mt-3" style="max-width:600px;">
+                    {{ session('message') }}
                 </div>
-               @endif
+            @endif
 
-  <div>
-                <h1 class="cat">View Book Detalis List</h1>
-            <table class="table">
+            <h2 class="page-title">Reader Details List</h2>
 
-            <tr>
-                <th>Name</th>
-                 <th>Phone Number</th>
-                  <th>Email</th>
-                   <th>Description</th>
-                    <th>Address</th>
-                     <th>User Image</th>
-                      <th>Action</th>
-            </tr>
+            <div class="reader-table-wrapper">
+                <table class="reader-table">
 
-            @foreach($create as $item)
-            <tr>
-            <td>{{$item->title}} </td>
-             <td>{{$item->phone}}</td>
-              <td>{{$item->email}}</td>
-              <td>{{ Str::limit($item->description, 50) }}</td>
-                <td>{{$item->address}}</td>
-                 <td><img class="user_img" src="user_images/{{$item->user_img}}" alt=""></td>
-                
-                
-                 <td style="text-align: center;">
-                    <div style="display: flex; justify-content: center; gap: 10px; align-items: center;">
-                             <a href="{{url('edit_reader', $item->id)}}" 
-                                style="padding:5px 15px; background-color:blue;
-                             color:white; border:none; text-decoration:none; border-radius:3px; font-size:14px;">
-                                 Edit
-                                     </a>   
-                    <form action="{{route('reader_delete' , $item->id)}}" method="POST" 
-                      onsubmit="return confirm('Are you sure you want to delete this category?');">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" style="padding:5px 10px; background-color:red; color:white; border:none; cursor:pointer;">
-                        Delete
-                    </button>
-                </form></td>
-            </tr>
-    @endforeach
-            </table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Description</th>
+                            <th>Address</th>
+                            <th>User Image</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @forelse($create as $item)
+                            <tr>
+                                <td>{{ $item->title }}</td>
+                                <td>{{ $item->phone }}</td>
+                                <td>{{ $item->email }}</td>
+                                <td>{{ Str::limit($item->description, 50) }}</td>
+                                <td>{{ $item->address }}</td>
+                                <td>
+                                    <img src="user_images/{{ $item->user_img }}" 
+                                         class="reader-image" 
+                                         alt="User Image">
+                                </td>
+
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="{{ url('edit_reader', $item->id) }}" 
+                                           class="btn-edit">
+                                            Edit
+                                        </a>
+
+                                        <form action="{{ route('reader_delete', $item->id) }}" 
+                                              method="POST"
+                                              onsubmit="return confirm('Are you sure you want to delete this reader?');">
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button type="submit" class="btn-delete">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7">No Reader Found</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+
+                </table>
             </div>
 
-            
+        </div>
+    </div>
 </div>
-</div>
- </div>
-        @include('admin.footer')
+
+@include('admin.footer')
+
+</body>
+</html>
