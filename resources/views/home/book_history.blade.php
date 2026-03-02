@@ -1,124 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  @include('home.css')
-    <style>
-    .cat {
+@include('home.css')
+
+<style>
+    .page-title {
         text-align: center;
+        font-size: 30px;
         font-weight: bold;
-        color: white;
-        padding-bottom: 30px;
-        font-size: 28px;
+        color: #ffffff;
+        margin-bottom: 40px;
     }
 
-   
-    .table_container {
+    .table-wrapper {
         overflow-x: auto;
-        margin-top: 20px;
     }
 
-    .table {
+    .custom-table {
+        width: 100%;
         text-align: center;
-        margin: auto;
-        width: 100%;       
-        border: 1px solid rgba(255, 255, 255, 0.1); 
-        table-layout: auto; 
-        margin-bottom:50px;
+        border-collapse: collapse;
+        margin-bottom: 60px;
     }
 
-    th {
-        background-color: rgba(21, 142, 138, 0.79);
-        padding: 15px;
-        color: white;
+    .custom-table thead {
+        background: rgba(21, 142, 138, 0.9);
+    }
+
+    .custom-table th {
+        padding: 14px;
+        color: #fff;
         font-weight: bold;
         white-space: nowrap;
-    }  
-    
-    .tr{
-           background-color: rgba(21, 142, 138, 0.79);
-
     }
 
-    td {
-        color: white;
-        border: 1px solid #ffff;
+    .custom-table td {
         padding: 12px;
-        font-size: 15px; 
+        border: 1px solid #ffffff;
+        color: #ffffff;
         vertical-align: middle;
     }
 
-    .book_img {
-        width: 60px; 
-        height: auto; 
-        border-radius: 5px;
+    .custom-table tbody tr {
+        background: rgba(21, 142, 138, 0.6);
     }
 
-    
-    .text-wrap {
-        white-space: normal;
-        max-width: 200px;
-        word-wrap: break-word;
+    .book-image {
+        width: 65px;
+        border-radius: 6px;
     }
-  </style>
+
+    .wrap-text {
+        max-width: 220px;
+        word-break: break-word;
+    }
+
+    .cancel-btn {
+        padding: 6px 12px;
+        background: red;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+    }
+
+    .not-allowed {
+        font-weight: bold;
+        color: #ffffff;
+    }
+</style>
 
 <body>
 
-   @include('home.header')
+@include('home.header')
 
- <div class="currently-market">
+<div class="currently-market">
     <div class="container">
-      <div class="row">
+        <div class="row">
 
-    
-             @if(session()->has('message'))
-    <div class="alert alert-success alert-dismissible fade show text-center mx-auto" role="alert" style="max-width: 600px; margin-top: 20px;">
-        <strong>Success!</strong> {{ session()->get('message') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="float: right; background: none; border: none; font-weight: bold;">X</button>
-    </div>
-@endif
-        
-            <h1 class="cat">View Borrow Book</h1>
-            
-            <div class="table_container">
-              <table class="table">
-                <thead>
-                  <tr class="tr">
-                    <th>Book Name</th>
-                     <th>Auther Name</th>
-                      <th> Status</th>
-                    <th>Book Image</th>
-                    <th>Cancel Request</th>
-                 
-                  </tr>
-                </thead>
+            {{-- Success Message --}}
+            @if(session()->has('message'))
+                <div class="alert alert-success text-center mx-auto" style="max-width:600px;">
+                    <strong>Success!</strong> {{ session('message') }}
+                </div>
+            @endif
+
+            <h2 class="page-title">Borrowed Book List</h2>
+
+            <div class="table-wrapper">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Book Name</th>
+                            <th>Author Name</th>
+                            <th>Status</th>
+                            <th>Book Image</th>
+                            <th>Cancel Request</th>
+                        </tr>
+                    </thead>
 
                     <tbody>
-                  @foreach($data as $item) <tr>
-                    
-                  
-                    <td class="text-wrap">{{$item->book->title}}</td>
-                    <td>{{$item->book->auther_name}}</td>
-                    <td><span class="badge badge-info">{{$item->status}}</span></td>
-                  <td><img src="book/{{$item->book->book_img}}" class="book_img"></td>
-                   <td> 
-                    @if($item->status== 'Applied')
-                   <form action="{{route('cancel_book' , $item->id)}}" method="POST" 
-                      onsubmit="return confirm('Are you sure you want to cancel this book?');">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" style="padding:5px 10px; background-color:red; color:white; border:none; cursor:pointer;">
-                        Cancel
-                    </button>
-                    @else
-                    <p style="color:white; font-weight:bold;">Not Allowed</p>
-                @endif
-                </td>
-                  </tr>
-                  @endforeach
-                </tbody>
-              </table>
+                        @forelse($data as $item)
+                            <tr>
+                                <td class="wrap-text">
+                                    {{ $item->book->title }}
+                                </td>
+
+                                <td>
+                                    {{ $item->book->auther_name }}
+                                </td>
+
+                                <td>
+                                    <span class="badge bg-info">
+                                        {{ $item->status }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <img src="{{ asset('book/'.$item->book->book_img) }}" 
+                                         class="book-image" alt="Book Image">
+                                </td>
+
+                                <td>
+                                    @if($item->status === 'Applied')
+                                        <form action="{{ route('cancel_book', $item->id) }}" 
+                                              method="POST"
+                                              onsubmit="return confirm('Are you sure to cancel this request?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="cancel-btn">
+                                                Cancel
+                                            </button>
+                                        </form>
+                                    @else
+                                        <span class="not-allowed">
+                                            Not Allowed
+                                        </span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5">No Borrow History Found</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+
+                </table>
             </div>
-      </div>
-      </div>
-      </div>
-  @include('home.footer')
+
+        </div>
+    </div>
+</div>
+
+@include('home.footer')
+
+</body>
+</html>
